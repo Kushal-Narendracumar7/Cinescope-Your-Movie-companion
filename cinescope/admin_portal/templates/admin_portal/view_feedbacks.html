@@ -1,0 +1,210 @@
+{% extends 'admin_portal/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .feedback-container {
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 4px 15px rgba(107, 13, 173, 0.2);
+        padding: 30px;
+    }
+
+    .feedback-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 15px;
+    }
+
+    .feedback-header h1 {
+        color: var(--primary-light);
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .search-filter-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .search-bar {
+        flex-grow: 1;
+        position: relative;
+    }
+
+    .search-bar input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        background-color: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 5px;
+        color: white;
+    }
+
+    .search-bar i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-light);
+    }
+
+    .filter-select {
+        padding: 10px;
+        background-color: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 5px;
+        color: white;
+    }
+
+    .feedback-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .feedback-table thead {
+        background-color: var(--primary-dark);
+    }
+
+    .feedback-table th {
+        padding: 15px;
+        text-align: left;
+        color: white;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .feedback-table tbody tr:hover {
+        background-color: rgba(107, 13, 173, 0.2);
+    }
+
+    .feedback-table td {
+        padding: 15px;
+        color: white;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        vertical-align: middle;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+
+    .no-feedbacks {
+        text-align: center;
+        color: #6c757d;
+        padding: 30px;
+        background-color: rgba(255,255,255,0.05);
+        border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .feedback-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .search-filter-container {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<main class="main-content">
+    <div class="feedback-container">
+        <div class="feedback-header">
+            <h1>User Feedback Management</h1>
+        </div>
+
+        <div class="search-filter-container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input 
+                    type="text" 
+                    id="searchFeedback" 
+                    placeholder="Search users, emails, feedbacks..."
+                    onkeyup="filterFeedbacks()"
+                />
+            </div>
+        </div>
+
+        {% if feedbacks %}
+        <div class="table-responsive">
+            <table class="feedback-table" id="feedbackTable">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in feedbacks %}
+                    <tr>
+                        <td>{{ feedback.user.username }}</td>
+                        <td>{{ feedback.email }}</td>
+                        <td>
+                            <span title="{{ feedback.feedback }}">
+                                {{ feedback.feedback|truncatechars:50 }}
+                            </span>
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-feedbacks">
+            <p>No Feedback Available</p>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<script>
+    function confirmDelete(event) {
+        event.preventDefault();
+        if (confirm("Are you sure you want to delete this feedback?")) {
+            event.target.submit();
+        }
+    }
+
+    function filterFeedbacks() {
+        const searchInput = document.getElementById('searchFeedback').value.toLowerCase();
+        const table = document.getElementById('feedbackTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        for (let row of rows) {
+            const user = row.cells[0].textContent.toLowerCase();
+            const email = row.cells[1].textContent.toLowerCase();
+            const feedback = row.cells[2].textContent.toLowerCase();
+
+            const searchMatch = user.includes(searchInput) || 
+                                email.includes(searchInput) || 
+                                feedback.includes(searchInput);
+
+            row.style.display = searchMatch ? '' : 'none';
+        }
+    }
+</script>
+
+{% endblock %}

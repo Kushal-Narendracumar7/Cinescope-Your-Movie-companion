@@ -1,0 +1,166 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body text-center p-4" style="box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2)">
+                    <h2 class="mb-4">Edit Profile</h2>
+
+                    <!-- Profile Picture Display -->
+                    <div class="profile-container">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-img" id="profile-preview">
+                        {% else %}
+                            <img src="/media/profiles/user_profile_placeholder.png" alt="Default Profile" class="profile-img" id="profile-preview">
+                        {% endif %}
+                    </div>
+
+                    <!-- Profile Edit Form -->
+                    <form method="POST" enctype="multipart/form-data" class="text-start">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                            {{ form.profile_picture }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            {{ form.username }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_first_name" class="form-label">First Name</label>
+                            {{ form.first_name }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_last_name" class="form-label">Last Name</label>
+                            {{ form.last_name }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_mobile_no" class="form-label" pattern=" \d{10}">Mobile Number</label>
+                            {{ form.mobile_no }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_gender" class="form-label">Gender</label>
+                            {{ form.gender }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_nationality" class="form-label">Nationality</label>
+                            {{ form.nationality }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_dob" class="form-label">Date of Birth</label>
+                            {{ form.date_of_birth }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_fav_genre" class="form-label">Favourite Genre</label>
+                            {{ form.favorite_genre }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    </form>
+                    
+                    <br>
+                    <a href="{% url 'accounts:password_change' %}">
+                        <button class="btn btn-warning w-100">Change Password</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script to Preview Profile Picture -->
+<script>
+    document.getElementById("id_profile_picture").addEventListener("change", function(event) {
+        let reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById("profile-preview").src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }); document.addEventListener('DOMContentLoaded', function() {
+        // Get the mobile number input field
+        const mobileInput = document.getElementById('id_mobile_no');
+        
+        if (mobileInput) {
+            // Set pattern for exactly 10 digits
+            mobileInput.setAttribute('pattern', '\\d{10}');
+            mobileInput.setAttribute('title', 'Please enter exactly 10 digits');
+            mobileInput.setAttribute('maxlength', '10');
+            
+            // Prevent non-numeric characters from being entered
+            mobileInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+            
+            // Optional: Add validation on blur
+            mobileInput.addEventListener('blur', function() {
+                if (this.value.length > 0 && this.value.length < 10) {
+                    alert("Mobile number must be exactly 10 digits");
+                }
+            });
+        }
+    });
+</script>
+<style>
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #007bff;
+        padding: 5px;
+    }
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-weight: bold;
+        padding: 10px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+{% endblock %}

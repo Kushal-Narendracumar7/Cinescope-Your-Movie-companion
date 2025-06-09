@@ -1,0 +1,448 @@
+{% extends 'main/base.html' %} {% block content %}
+<style>
+  .tab-space {
+    margin-right: 20px;
+  }
+
+  .movie-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+
+  .movie-image {
+    width: 200px;
+    height: 300px;
+    object-fit: cover;
+    margin-top: 10px;
+    border-radius: 10px;
+  }
+
+  .card {
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+    margin: 10px;
+  }
+
+  .card-main-body {
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6),
+      0 0 10px rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out,
+      filter 0.3s ease-in-out;
+    margin: 10px;
+  }
+
+  .card-main-body:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+  }
+
+  .card-body {
+    text-align: center;
+  }
+
+  .movie-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .release-year,
+  .description {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin-bottom: 5px;
+    word-wrap: break-word;
+  }
+
+  .movie-name {
+    height: 50px;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 100%;
+  }
+
+  /* Hides What's New section initially */
+  .whats-new-section {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column; /* Default to column on smaller screens */
+  }
+
+  .whats-new-title {
+    color: #ffcc00;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 15px;
+    cursor: pointer;
+  }
+
+  /* Horizontal layout for Featured & Recent movies (default for larger screens) */
+  .movies-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .recent-movies {
+    width: 100%;
+  }
+
+  .features-movies {
+    width: 100%;
+  }
+
+  .movie-list {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 10px 0;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+  }
+
+  .movie-list::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .movie-list::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+  }
+
+  .movie-list::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 10px;
+  }
+
+  .movie {
+    width: 200px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    flex-shrink: 0; /* Prevent items from shrinking below their width */
+  }
+
+  .movie:hover {
+    transform: scale(1.1);
+  }
+  .search-filter-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    flex-grow: 1;
+    position: relative;
+}
+
+.search-bar input {
+    width: 50%;
+    padding: 10px 15px 10px 40px;
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 5px;
+    color: white;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-light);
+}
+
+.filter-select {
+    padding: 10px;
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 5px;
+    color: white;
+}
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .movie-image {
+      width: 150px; /* Adjust image size for smaller screens */
+      height: 225px;
+    }
+
+    .movie {
+      width: 150px; /* Adjust movie card width for smaller screens */
+    }
+
+    .movie-list {
+      gap: 10px; /* Reduce gap in movie list */
+    }
+
+    .whats-new-section {
+      padding: 15px; /* Reduce padding for smaller screens */
+    }
+
+    .whats-new-title {
+      font-size: 20px; /* Reduce title font size */
+    }
+
+    .movies-container {
+      flex-direction: column; /* Stack Featured and Recent on smaller screens */
+    }
+
+    .recent-movies,
+    .features-movies {
+      width: 95%; /* Adjust width to take more space */
+    }
+
+    .movie-details {
+      margin-top: 15px; /* Reduce margin in details */
+    }
+
+    .release-year,
+    .description {
+      padding: 3px; /* Reduce padding in details */
+      font-size: 0.9em; /* Reduce font size in details */
+    }
+
+    .movie-name {
+      height: auto; /* Allow movie name to wrap */
+      white-space: normal;
+      font-size: 90%;
+    }
+
+    .card {
+      margin: 8px; /* Reduce card margin */
+    }
+
+    .card-main-body {
+      margin: 8px; /* Reduce card-main-body margin */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .movie-image {
+      width: 120px;
+      height: 180px;
+    }
+
+    .movie {
+      width: 120px;
+      padding: 8px;
+    }
+
+    .movie-list {
+      gap: 8px;
+    }
+
+    .whats-new-title {
+      font-size: 18px;
+    }
+
+    .release-year,
+    .description {
+      font-size: 0.8em;
+    }
+
+    .movie-name {
+      font-size: 80%;
+    }
+
+    .card {
+      border-radius: 10px;
+    }
+
+    .card-main-body {
+      border-radius: 10px;
+    }
+  }
+</style>
+{% block form_block %}{% endblock %}
+
+<div class="container mt-5 text-center">
+  <div class="search-filter-container">
+    <div class="search-bar">
+      <div style="position: relative;">
+        <input 
+            type="text" 
+            id="searchMovies" 
+            placeholder="Search Movies"
+            onkeyup="filterMovies()"
+            style="padding-left: 35px; width: 50%;" 
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <div class="card">
+        <div class="container mt-4">
+          <div class="row">
+            {% for movie in movies %}
+            <div class="col-md-4">
+              <div class="card-main-body d-flex flex-column align-items-center">
+                {% if movie.image %} {% if "http" in movie.image.url %}
+                <img
+                  src="{{ movie.image.url }}"
+                  alt="{{ movie.name }}"
+                  class="img-fluid tab-space movie-image"
+                />
+                {% else %}
+                <img
+                  src="{{ movie.image.url }}"
+                  alt="{{ movie.name }}"
+                  class="img-fluid tab-space movie-image"
+                />
+                {% endif %} {% else %}
+                <img
+                  src="/media/default_movie_image.jpg"
+                  alt="Default Image"
+                  class="img-fluid tab-space movie-image"
+                />
+                {% endif %}
+
+                <div class="card-body">
+                  <h5 class="card-title">{{ movie.name }}</h5>
+                  <p class="card-text">
+                    <strong>Year:</strong> {{ movie.release_date.year }}
+                  </p>
+                  <p class="card-text">
+                    {{ movie.description|truncatewords:20 }}
+                  </p>
+                  <a
+                    href="{% url 'main:details' movie.id %}"
+                    class="btn btn-outline-success"
+                    >View Details</a
+                  >
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <p class="text-center">No movies found.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What's New Section -->
+  <div id="whatsNewSection" class="whats-new-section mt-5">
+    <h3 id="whatsNewTitle" class="whats-new-title">What's New</h3>
+    <div class="movies-container">
+      <!-- Featured Movies -->
+      <div class="featured-movies">
+        <h4>Featured Movies</h4>
+        <div class="movie-list">
+          {% for movie in featured_movies %}
+          <div class="movie">
+            {% if movie.image %}
+            <a href="{% url 'main:details' movie.id %}">
+              <img
+                src="{{ movie.image.url }}"
+                alt="{{ movie.name }}"
+                class="img-fluid tab-space movie-image"
+              />
+            </a>
+            {% else %}
+            <a href="{% url 'main:details' movie.id %}">
+              <img
+                src="/media/default_movie_image.jpg"
+                alt="Default Image"
+                class="img-fluid tab-space movie-image"
+              />
+            </a>
+            
+            {% endif %}
+
+            
+          </div>
+          {% empty %}
+          <p>No featured movies found.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Recent Movies -->
+      <div class="recent-movies">
+        <h4>Recent Movies</h4>
+        <div class="movie-list">
+          {% for movie in recent_movies %}
+          <div class="movie">
+            <a href="{% url 'main:details' movie.id %}"
+              >{% if movie.image %}
+              {% if "http" in movie.image.url %}
+                  <img src="{{ movie.image.url }}" alt="{{ movie.name }}" class="img-fluid tab-space movie-image">
+              {% else %}
+                  <img src="{{ movie.image.url }}" alt="{{ movie.name }}" class="img-fluid tab-space movie-image">
+              {% endif %}
+          {% else %}
+              <img src="/media/default_movie_image.jpg" alt="Default Image" class="img-fluid tab-space movie-image">
+          {% endif %}
+          </a>
+           
+          </div>
+          {% empty %}
+          <p>No recent movies found.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript to Toggle the What's New Section -->
+<script>
+  function filterMovies() {
+    let input = document.getElementById("searchMovies").value.toLowerCase();
+    let movies = document.querySelectorAll(".col-md-4"); // Target the parent container of each movie card
+
+    movies.forEach(movie => {
+        let titleElement = movie.querySelector(".card-title"); // Movie title inside the card
+        if (titleElement) {
+            let title = titleElement.textContent.toLowerCase();
+            if (title.includes(input)) {
+                movie.style.display = "block"; // Show matching movie
+            } else {
+                movie.style.display = "none"; // Hide non-matching movie
+            }
+        }
+    });
+}
+
+// Toggle What's New Section
+document.getElementById("whatsNewTitle").addEventListener("click", function () {
+    let section = document.getElementById("whatsNewSection");
+    section.style.display = section.style.display === "none" ? "block" : "none";
+});
+
+// Ensure the function runs on every key press
+document.getElementById("searchMovies").addEventListener("keyup", filterMovies);
+</script>
+
+{% endblock %}

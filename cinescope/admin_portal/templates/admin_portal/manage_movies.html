@@ -1,0 +1,192 @@
+{% extends 'admin_portal/base.html' %}
+{% block content %}
+{% load static %}
+    <STYLE>
+        
+        .search-filter-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+    
+        .search-bar {
+            flex-grow: 1;
+            position: relative;
+        }
+    
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 5px;
+            color: white;
+        }
+    
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-light);
+        }
+    
+        .filter-select {
+            padding: 10px;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 5px;
+            color: white;
+        }
+    .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        background:var(--dark-bg);    
+    }
+
+    .movie-card {
+        background: var(--dark-bg);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(107, 13, 173, 0.2);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .movie-card:hover {
+        transform: scale(1.05);
+        background: var(--hover-bg);
+    }
+
+    .movie-image {
+        width:200px;
+    height: 300px;
+    object-fit: cover;
+    margin-top: 10px;
+    border-radius: 10px;
+    }
+
+    .movie-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    .movie-details {
+        font-size: 14px;
+        color: #ccc;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background 0.3s;
+        
+    }
+
+    .btn-warning {
+        background: var(--accent);
+        color: white;
+    }
+    .btn-show {
+        background: #ffcc00;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn:hover {
+        opacity: 0.8;
+    }
+
+    </STYLE>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h1>Manage Movies</h1>
+            <a href="{% url 'admin_portal:add_movies' %}" class="btn btn-warning">+ Add Movie</a>
+        </div>
+        <div class="search-filter-container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input 
+                    type="text" 
+                    id="searchMovies" 
+                    placeholder="Search Movies"
+                    onkeyup="filterMovies()"
+                />
+            </div>
+            
+        </div>
+
+        <div class="movie-grid">
+            {% for movie in movies %}
+            <div class="movie-card" data-status="{{ movie.status }}">
+                <img src="{{ movie.image.url|default:'/media/default_movie_image.jpg' }}" alt="{{ movie.name }}" class="movie-image">
+                <h2 class="movie-title">{{ movie.name }}</h2>
+                <p class="movie-details"><strong>Year:</strong> {{ movie.release_date.year }}</p>
+                <p class="movie-details">{{ movie.description|truncatewords:20 }}</p>
+
+                <div class="btn-container">
+                    <a href="{% url 'admin_portal:edit_movie' movie.id %}" 
+                       class="btn btn-warning"
+                       style="width:70px; height:40px; border:none; display:flex; align-items:center; justify-content:center;">
+                       Edit
+                    </a>
+                    
+                    <form action="{% url 'admin_portal:delete_movie' movie.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" 
+                                style="width:70px; height:40px; border:none; display:flex; align-items:center; justify-content:center;">
+                            Delete
+                        </button>
+                    </form>
+
+                    <a href="{% url 'admin_portal:view_movie' movie.id %}" class="btn btn-show"
+                    style="height:40px; border:none; display:flex; align-items:center; justify-content:center;">Details</a>
+                </div>
+                
+            </div>
+            {% empty %}
+            <p>No movies found.</p>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+<script>
+    function filterMovies() {
+        let input = document.getElementById("searchMovies").value.toLowerCase();
+        let filterValue = document.getElementById("statusFilter").value;
+        let movies = document.querySelectorAll(".movie-card");
+        
+        movies.forEach(movie => {
+            let title = movie.querySelector(".movie-title").textContent.toLowerCase();
+            let status = movie.getAttribute("data-status");
+            
+            let matchesSearch = title.includes(input);
+            let matchesFilter = filterValue === "" || status === filterValue;
+            
+            if (matchesSearch && matchesFilter) {
+                movie.style.display = "block";
+            } else {
+                movie.style.display = "none";
+            }
+        });
+    }
+    
+</script>
+{% endblock %}

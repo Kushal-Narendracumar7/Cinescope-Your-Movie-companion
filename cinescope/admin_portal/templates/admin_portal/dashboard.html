@@ -1,0 +1,120 @@
+{% extends 'admin_portal/base.html' %}
+{%load static %}
+{% block content %}
+<style>
+  .recent-card {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    color: white;
+}
+
+.recent-header {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.activity-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.activity-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 16px;
+}
+
+.activity-item strong {
+    color: #FFD700;
+}
+
+</style>
+<!-- Main Content -->
+<main class="main-content">
+  <div class="header">
+    <h1>Dashboard Overview</h1>
+    
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon icon-users">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Total Users</h3>
+        <p>{{ users }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-movies">
+        <i class="fas fa-film"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Total Movies</h3>
+        <p>{{ movies }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-reviews">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Total Reviews</h3>
+        <p>{{ reviews }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-reviews">
+        <i class="fas fa-comment"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Total Feedbacks</h3>
+        <p>{{ feedbacks }}</p>
+      </div>
+    </div>
+
+   
+</div>
+
+
+<div class="recent-card">
+  <div class="recent-header">
+    <h2>Recent Admin Actions</h2>
+  </div>
+  <ul class="activity-list">
+    {% if recent_actions %}
+      {% for action in recent_actions %}
+        <li class="activity-item">
+          <p>
+            <strong>{{ action.user }}</strong> 
+            {% if action.action_flag == 1 %}
+              added
+            {% elif action.action_flag == 2 %}
+              changed
+            {% elif action.action_flag == 3 %}
+              deleted
+            {% endif %}
+            <strong>{{ action.content_type }}</strong>: {{ action.object_repr }} 
+            on {{ action.action_time|date:"M d, Y H:i" }}
+          </p>
+        </li>
+      {% endfor %}
+    {% else %}
+      <p>No recent admin activity</p>
+    {% endif %}
+  </ul>
+</div>
+
+
+  </main>
+  </div>
+{% endblock %}

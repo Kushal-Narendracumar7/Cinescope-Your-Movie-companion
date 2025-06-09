@@ -1,0 +1,50 @@
+{% load static %}
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Cinescope Admin{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="shortcut icon" href="{% static 'cinescope.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+  </head>
+  
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Cinescope Admin</h2>
+        </div>
+        <ul class="sidebar-menu">
+          <li><a href="{% url 'admin_portal:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="{% url 'admin_portal:manage_movies' %}" class="{% if request.resolver_match.url_name == 'manage_movies' %}active{% endif %}"><i class="fas fa-film"></i> Movies</a></li>
+          <li><a href="{% url 'admin_portal:manage_users' %}" class="{% if request.resolver_match.url_name == 'manage_users' %}active{% endif %}"><i class="fas fa-users"></i> Users</a></li>
+          <li><a href="{% url 'admin_portal:view_reviews' %}" class="{% if request.resolver_match.url_name == 'view_reviews' %}active{% endif %}"><i class="fas fa-star"></i> Reviews</a></li>
+          <li><a href="{% url 'admin_portal:view_feedbacks' %}" class="{% if request.resolver_match.url_name == 'view_feedbacks' %}active{% endif %}"><i class="fas fa-comment"></i> Feedbacks</a></li>
+          <li><a href="{% url 'admin_portal:admin_logout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+        </ul>
+        
+        <div class="user-profile">
+          <div class="avatar">
+            {% if user.profile_picture %}
+
+            <img src="{{ user.profile_picture.url|default:'/static/default_profile.png' }}" class = 'avatar' alt="Profile Picture">
+            {% else %}
+            <div class="profile-placeholder">{{ user.username|slice:"0:2" }}</div>
+            {% endif %}</div>
+          <div class="user-info">
+            <h4>{{ user.username }}</h4>
+            <p>Administrator</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+    <script src="{% static url 'sidebar-active.js'%}"></script>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+  
+    .tab-space {
+      margin-right: 20px;
+    }
+  
+    .movie-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+  
+    .movie-image {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+  
+    .card {
+      background: rgba(0, 0, 0, 0.7);
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease-in-out;
+      margin: 10px;
+    }
+  
+    .card-main-body {
+      background: rgba(0, 0, 0, 0.7);
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6),
+        0 0 10px rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out,
+        filter 0.3s ease-in-out;
+      margin: 10px;
+    }
+  
+    .card-main-body:hover {
+      transform: scale(1.1);
+      filter: brightness(1.1);
+    }
+  
+    .card-body {
+      text-align: center;
+    }
+  
+    .movie-details {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+  
+    .release-year,
+    .description {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      text-align: center;
+      margin-bottom: 5px;
+      word-wrap: break-word;
+    }
+  
+    .movie-name {
+      height: 50px;
+      width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 100%;
+    }
+  
+    /* Responsive adjustments for movie details */
+    @media (max-width: 768px) {
+      .movie-image {
+        width: 150px;
+        height: 225px;
+      }
+  
+      .movie-details {
+        margin-top: 15px;
+      }
+  
+      .release-year,
+      .description {
+        font-size: 0.9em;
+        padding: 3px;
+      }
+  
+      .movie-name {
+        height: auto;
+        white-space: normal;
+        font-size: 90%;
+      }
+    }
+  
+    @media (max-width: 480px) {
+      .movie-image {
+        width: 120px;
+        height: 180px;
+      }
+  
+      .release-year,
+      .description {
+        font-size: 0.8em;
+      }
+  
+      .movie-name {
+        font-size: 80%;
+      }
+    }
+  </style>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+      <div class="card">
+        <div class="container mt-4">
+          <div class="row">
+            {% for movie in movies %}
+            <div class="col-md-4">
+              <div class="card-main-body d-flex flex-column align-items-center">
+                {% if movie.image %} {% if "http" in movie.image.url %}
+                <img
+                  src="{{ movie.image.url }}"
+                  alt="{{ movie.name }}"
+                  class="img-fluid tab-space movie-image"
+                />
+                {% else %}
+                <img
+                  src="{{ movie.image.url }}"
+                  alt="{{ movie.name }}"
+                  class="img-fluid tab-space movie-image"
+                />
+                {% endif %} {% else %}
+                <img
+                  src="/media/default_movie_image.jpg"
+                  alt="Default Image"
+                  class="img-fluid tab-space movie-image"
+                />
+                {% endif %}
+
+                <div class="card-body">
+                  <h5 class="card-title">{{ movie.name }}</h5>
+                  <p class="card-text">
+                    <strong>Year:</strong> {{ movie.release_date.year }}
+                  </p>
+                  <p class="card-text">
+                    {{ movie.description|truncatewords:20 }}
+                  </p>
+                  <a
+                    href="{% url 'main:details' movie.id %}"
+                    class="btn btn-outline-success"
+                    >View Details</a
+                  >
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <p class="text-center">No movies found.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

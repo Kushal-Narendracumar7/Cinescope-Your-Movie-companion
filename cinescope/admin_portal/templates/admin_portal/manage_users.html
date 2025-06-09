@@ -1,0 +1,311 @@
+{% extends 'admin_portal/base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #6a0dad;
+        --primary-light: #9b59b6;
+        --primary-dark: #4b0082;
+        --accent: #b19cd9;
+        --dark-bg: #212529;
+        --hover-bg: rgba(107, 13, 173, 0.1);
+    }
+
+    .users-container {
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 4px 15px rgba(107, 13, 173, 0.2);
+        padding: 30px;
+        overflow: auto;
+        margin:0;        
+    }
+
+    .users-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin:0;
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 15px;
+    }
+
+    .users-header h1 {
+        color: var(--primary-light);
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .search-filter-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .search-bar {
+        flex-grow: 1;
+        position: relative;
+    }
+
+    .search-bar input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        background-color: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 5px;
+        color: white;
+    }
+
+    .search-bar i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-light);
+    }
+
+    .filter-select {
+        padding: 10px;
+        background-color: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 5px;
+        color: white;
+    }
+
+    .users-table {
+        width: 100%;
+        overflow-x: auto;
+        background: rgba(0, 0, 0, 0.8);
+        border-spacing: 0;
+    }
+
+    .users-table thead {
+        background-color: var(--primary-dark);
+
+    }
+
+    .users-table th {
+        padding: 15px;
+        text-align: left;
+        color: white;
+        font-weight: 500;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .users-table tbody tr {
+        transition: background-color 0.3s ease;
+    }
+
+    .users-table tbody tr:hover {
+        background-color: rgba(107, 13, 173, 0.2);
+    }
+
+    .users-table td {
+        padding: 15px;
+        color: white;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        vertical-align: middle;
+    }
+
+    .status-active {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    .status-blocked {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-block, .btn-unblock {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+    }
+
+    .btn-block {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-unblock {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-block:hover {
+        background-color: #c82333;
+    }
+
+    .btn-unblock:hover {
+        background-color: #218838;
+    }
+
+    .no-users {
+        text-align: center;
+        color: #6c757d;
+        padding: 30px;
+        background-color: rgba(255,255,255,0.05);
+        border-radius: 5px;
+    }
+
+    @media (max-width: 992px) {
+        .search-filter-container {
+            flex-direction: column;
+        }
+
+        .users-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<main class="main-content">
+    <div class="users-container">
+        <div class="users-header">
+            <h1>System Users Management</h1>
+        </div>
+
+        <div class="search-filter-container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input 
+                    type="text" 
+                    id="searchUsers" 
+                    placeholder="Search Users (Username, Email, Name)"
+                    onkeyup="filterUsers()"
+                />
+            </div>
+            <select class="filter-select" id="statusFilter" onchange="filterUsers()">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Blocked">Blocked</option>
+            </select>
+        </div>
+
+        {% if users %}
+        <div class="table-responsive">
+            <table class="users-table" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Mobile No</th>
+                        <th>Gender</th>
+                        <th>Nationality</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.mobile_no }}</td>
+                        <td>{{ user.gender }}</td>
+                        <td>{{ user.nationality }}</td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="status-active">Active</span>
+                            {% else %}
+                                <span class="status-blocked">Blocked</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <form 
+                                    action="{% url 'admin_portal:block_user' user.id %}" 
+                                    method="POST" 
+                                    onsubmit="return confirmBlockUser(event)"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-block">
+                                        <i class="fas fa-ban"></i> Block
+                                    </button>
+                                </form>
+                                <form 
+                                    action="{% url 'admin_portal:unblock_user' user.id %}" 
+                                    method="POST" 
+                                    onsubmit="return confirmUnblockUser(event)"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-unblock">
+                                        <i class="fas fa-unlock"></i> Unblock
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-users">
+            <p>No Users Available</p>
+        </div>
+        {% endif %}
+
+    </div>
+    
+</main>
+
+<script>
+    function confirmBlockUser(event) {
+        event.preventDefault();
+        if (confirm("Are you sure you want to block this user?")) {
+            event.target.submit();
+        }
+    }
+
+    function confirmUnblockUser(event) {
+        event.preventDefault();
+        if (confirm("Are you sure you want to unblock this user?")) {
+            event.target.submit();
+        }
+    }
+
+    function filterUsers() {
+        const searchInput = document.getElementById('searchUsers').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const table = document.getElementById('usersTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        for (let row of rows) {
+            const username = row.cells[0].textContent.toLowerCase();
+            const email = row.cells[1].textContent.toLowerCase();
+            const firstName = row.cells[2].textContent.toLowerCase();
+            const lastName = row.cells[3].textContent.toLowerCase();
+            const status = row.cells[7].textContent.trim();
+
+            const searchMatch = 
+                username.includes(searchInput) || 
+                email.includes(searchInput) || 
+                firstName.includes(searchInput) || 
+                lastName.includes(searchInput);
+
+            const statusMatch = statusFilter === '' || status === statusFilter;
+
+            row.style.display = searchMatch && statusMatch ? '' : 'none';
+        }
+    }
+</script>
+
+{% endblock %}

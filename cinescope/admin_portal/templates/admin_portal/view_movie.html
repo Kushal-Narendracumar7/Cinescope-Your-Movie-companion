@@ -1,0 +1,157 @@
+{% extends 'admin_portal/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<style>
+
+    .movie-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+    }
+    .movie-image {
+        width: 300px;
+        max-height: 500px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    .youtube-player iframe {
+        width: 100%;
+        height: 500px;
+        border-radius: 10px;
+    }
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .rating-container {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .sub-contents{
+        display:flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    .watchlist-container {
+        background-color: transparent;
+        color: white;
+        padding: 15px 20px;
+        border: 2px solid #ffcc00;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px; 
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .watchlist-container:hover {
+        background-color: #ffcc00;
+        border:none;
+        color: #2E1A47;
+        font-weight:bold;
+    }
+    
+</style>
+<script>
+</script>
+
+<div class="container mt-4">
+    
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="row no-gutters">
+                    <div class="col-md-5">
+                        <div class="movie-container p-3">
+                            {% if movie.image %}
+                            {% if "http" in movie.image.url %}
+                                <img src="{{ movie.image.url }}" alt="{{ movie.name }}" class="img-fluid tab-space movie-image">
+                            {% else %}
+                                <img src="{{ movie.image.url }}" alt="{{ movie.name }}" class="img-fluid tab-space movie-image">
+                            {% endif %}
+                        {% else %}
+                            <img src="/media/default_movie_image.jpg" alt="Default Image" class="img-fluid tab-space movie-image">
+                        {% endif %}
+                        
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <h1 class="card-title text-center">{{ movie.name }}</h1>
+                            <div class="sub-contents">
+                            <div class="rating-container text-center">
+                                ⭐ <b>Rating: {{ movie.rating }}/10</b>
+                            </div>
+
+                            <div class="rating-container text-center">
+                                ⭐ <b>User-Ratings: {{ average }}/10</b>
+                            </div>
+
+                        
+                            </div>
+                            <hr>
+                            <p class="card-text"><b>Genre:</b> {{ movie.genre }}</p>
+                            <p class="card-text"><b>Duration:</b> {{ movie.runtime }} mins</p>
+                            <p class="card-text"><b>Director:</b> {{ movie.director }}</p>
+                            <p class="card-text"><b>Production:</b> {{ movie.production }}</p>
+                            <p class="card-text"><b>Budget:</b> {{ movie.budget|default:"N/A" }} Crores</p>
+                            <p class="card-text"><b>Box Office:</b> {{ movie.gross_collection|default:"N/A" }} Crores</p>
+                            <p class="card-text"><b>Language:</b> {{ movie.language }}</p>
+                            <p class="card-text"><b>Cast:</b> {{ movie.cast }}</p>
+                            <p class="card-text"><b>Description:</b> {{ movie.description }}</p>
+                            <p class="card-text"><i>Release Date: {{ movie.release_date }}</i></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <h2 class="text-center">Watch the Trailer</h2>
+                    {% if movie.trailer_id %}
+                        <div class="youtube-player text-center">
+                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ movie.trailer_id }}" allowfullscreen></iframe>
+                        </div>
+                    {% else %}
+                        <p class="text-center">No Trailer Available</p>
+                    {% endif %}
+                </div>
+
+                <div class="p-4">
+                    <h2 class="text-center">Where to Watch?</h2>
+                    {% if movie.streaming_on %}
+                        <p class="text-center">Available on: <b>{{ movie.streaming_on }}</b></p>
+                    {% else %}
+                        <p class="text-center">No Streaming Information Available</p>
+                    {% endif %}
+                </div>
+
+                <div class="card-body">
+                    
+
+                    <div class="mt-4">
+                        <h2>Reviews</h2>
+                        {% if reviews %}
+                            {% for review in reviews %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>{{ review.user }}</b></h5>
+                                        <p class="card-text">{{ review.comment }}</p>
+                                        <p class="card-text"><b>⭐ Rating: {{ review.rating }}</b></p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No ratings and reviews yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

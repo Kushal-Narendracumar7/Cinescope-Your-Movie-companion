@@ -1,0 +1,23 @@
+{% extends 'admin_portal/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="add-movie-container">
+  <header>
+    <h3 class="text-center" style="color:#6a0dad;">Add Movies</h3>
+  </header>
+  <div class="add-movie-card">
+    <div class="card-content">
+      <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {{ form | crispy}}
+        <div class="form-group text-center">
+          <input type="submit" class="btn btn-primary" value="Add Movie">
+      </form>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

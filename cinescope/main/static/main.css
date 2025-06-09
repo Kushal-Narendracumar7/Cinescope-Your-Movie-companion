@@ -1,0 +1,68 @@
+    /* Body styling */
+    body {
+        background-image: url('https://t4.ftcdn.net/jpg/03/09/73/63/360_F_309736398_u31wYLpEXr8mX4t7FqZ1d0EyomwCvxUf.jpg');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif; /* Added font for better readability */
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Anchor link styling */
+    a {
+        text-align: center;
+        display: block;
+        color: oceanblue;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: color 0.3s ease; /* Smooth color transition */
+    }
+
+    a:link {
+        color: black;
+    }
+
+    a:hover {
+        color: #0077cc; /* Hover effect for links */
+    }
+
+    /* Card styling */
+    #cardstyle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Center the card vertically and horizontally */
+        padding: 20px;
+    }
+
+    .card {
+        width: 250px;
+        height: 350px; /* Increased height for better visual balance */
+        margin: 20px;
+        box-shadow: 0 15px 25px rgba(129, 124, 124, 0.2);
+        border-radius: 10px;
+        backdrop-filter: blur(15px);
+        background-color: rgba(255, 255, 255, 0.8); /* Added a semi-transparent background */
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    }
+
+    .card:hover {
+        transform: translateY(-10px); /* Hover effect to lift the card */
+        box-shadow: 0 25px 35px rgba(129, 124, 124, 0.4); /* Enhanced shadow on hover */
+    }
+
+    .card img {
+        width: 100%;
+        height: 60%;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .tab-space {
+        margin-top: 20px;
+    }
+
